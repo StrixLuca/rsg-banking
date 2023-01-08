@@ -1,13 +1,6 @@
 Config = {}
-Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qr-target interactions (don't change this, go to your server.cfg and add setr UseTarget true)
-Config.cardTypes = { "visa", "mastercard"}
 
-Config.ATMModels = {
-    -- "prop_atm_01",
-    -- "prop_atm_02",
-    -- "prop_atm_03",
-    -- "prop_fleeca_atm"
-}
+Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qr-target interactions (don't change this, go to your server.cfg and add setr UseTarget true)
 
 Config.BankLocations = {
     {name = 'Bank of Rhodes',           bankType = "BANKS",     coords = vector3(1292.307, -1301.539, 77.04012),    showblip = true},
