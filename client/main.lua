@@ -5,7 +5,7 @@ local blips = {}
 Citizen.CreateThread(function()
     for banks, v in pairs(Config.BankLocations) do
         if Config.UseTarget == false then
-            exports['rsg-core']:createPrompt(v.name, v.coords, 0xF3830D8E, 'Open ' .. v.name, {
+            exports['rsg-core']:createPrompt(v.name, v.coords, RSGCore.Shared.Keybinds['J'], 'Open ' .. v.name, {
                 type = 'client',
                 event = 'rsg-banking:openBankScreen',
                 args = {},
