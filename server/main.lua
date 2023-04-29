@@ -452,3 +452,53 @@ end)
 RegisterNetEvent("payanimation", function()
     TriggerEvent('animations:client:EmoteCommandStart', {"id"})
 end)
+
+local num = tonumber
+
+RSGCore.Functions.CreateUseableItem('moneyclip', function(source, item)
+    local src = source
+    local Player = RSGCore.Functions.GetPlayer(src)
+
+    if not Player then return end
+
+    local itemData = Player.Functions.GetItemBySlot(item.slot)
+
+    if not itemData then return end
+
+    local amount = itemData.info.money
+
+    if Player.Functions.RemoveItem(item.name, 1, item.slot) then
+        Player.Functions.AddMoney('cash', amount)
+
+        RSGCore.Functions.Notify(src, 'You\'ve got $'..amount..' cash from this Money Clip!', 'success', 3000)
+    end
+end)
+
+RSGCore.Commands.Add('moneyclip', 'Make Money Clip', {{ name = 'amount', help = 'How much money do you want convert?' }}, true, function(source, args)
+    local src = source
+    local args1 = num(args[1])
+
+    if args1 <= 0 then
+        RSGCore.Functions.Notify(src, 'Please enter the correct amount!', 'error', 3000)
+
+        return
+    end
+
+    local Player = RSGCore.Functions.GetPlayer(src)
+
+    if not Player then return end
+
+    local money = Player.Functions.GetMoney('cash')
+
+    if money and money >= args1 then
+        if Player.Functions.RemoveMoney('cash', args1, 'give-money') then
+            local info =
+            {
+                money = args1
+            }
+
+            Player.Functions.AddItem('moneyclip', 1, false, info)
+            RSGCore.Functions.Notify(src, 'You\'ve just converted $'..args1..' cash into a Money Clip!', 'success', 3000)
+        end
+    end
+end, 'user')
