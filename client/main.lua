@@ -58,13 +58,6 @@ end
 
 -- Events
 
-RegisterNetEvent('rsg-banking:transferError', function(msg)
-    SendNUIMessage({
-        status = "transferError",
-        error = msg
-    })
-end)
-
 RegisterNetEvent('rsg-banking:successAlert', function(msg)
     SendNUIMessage({
         status = "successMessage",
@@ -85,14 +78,6 @@ RegisterNetEvent("hidemenu", function()
     })
 end)
 
-RegisterNetEvent('rsg-banking:client:newCardSuccess', function(cardno, ctype)
-    SendNUIMessage({
-        status = "updateCard",
-        number = cardno,
-        cardtype = ctype
-    })
-end)
-
 -- NUI Callbacks
 
 RegisterNUICallback("NUIFocusOff", function(_, cb)
@@ -100,11 +85,6 @@ RegisterNUICallback("NUIFocusOff", function(_, cb)
     SendNUIMessage({
         status = "closebank"
     })
-    cb("ok")
-end)
-
-RegisterNUICallback("createSavingsAccount", function(_, cb)
-    TriggerServerEvent('rsg-banking:createSavingsAccount')
     cb("ok")
 end)
 
@@ -121,67 +101,6 @@ RegisterNUICallback("doWithdraw", function(data, cb)
     if tonumber(data.amount) ~= nil and tonumber(data.amount) > 0 then
         TriggerServerEvent('rsg-banking:doQuickWithdraw', data.amount, true)
         openAccountScreen()
-        cb("ok")
-    end
-    cb(nil)
-end)
-
-RegisterNUICallback("doATMWithdraw", function(data, cb)
-    if tonumber(data.amount) ~= nil and tonumber(data.amount) > 0 then
-        TriggerServerEvent('rsg-banking:doQuickWithdraw', data.amount, false)
-        openAccountScreen()
-        cb("ok")
-    end
-    cb(nil)
-end)
-
-RegisterNUICallback("savingsDeposit", function(data, cb)
-    if tonumber(data.amount) ~= nil and tonumber(data.amount) > 0 then
-        TriggerServerEvent('rsg-banking:savingsDeposit', data.amount)
-        openAccountScreen()
-        cb("ok")
-    end
-    cb(nil)
-end)
-
-RegisterNUICallback("savingsWithdraw", function(data, cb)
-    if tonumber(data.amount) ~= nil and tonumber(data.amount) > 0 then
-        TriggerServerEvent('rsg-banking:savingsWithdraw', data.amount)
-        openAccountScreen()
-        cb("ok")
-    end
-    cb(nil)
-end)
-
-RegisterNUICallback("doTransfer", function(data, cb)
-    if data ~= nil then
-        TriggerServerEvent('rsg-banking:initiateTransfer', data)
-        cb("ok")
-    end
-    cb(nil)
-end)
-
-RegisterNUICallback("createDebitCard", function(data, cb)
-    if data.pin ~= nil then
-        TriggerServerEvent('rsg-banking:createBankCard', data.pin)
-        cb("ok")
-    end
-    cb(nil)
-end)
-
-RegisterNUICallback("lockCard", function(_, cb)
-    TriggerServerEvent('rsg-banking:toggleCard', true)
-    cb("ok")
-end)
-
-RegisterNUICallback("unLockCard", function(_, cb)
-    TriggerServerEvent('rsg-banking:toggleCard', false)
-    cb("ok")
-end)
-
-RegisterNUICallback("updatePin", function(data, cb)
-    if data.pin and data.currentBankCard then
-        TriggerServerEvent('rsg-banking:updatePin', data.currentBankCard, data.pin)
         cb("ok")
     end
     cb(nil)

@@ -34,7 +34,6 @@
                                 <a class="nav-link active m-1" id="bankingHome-tab" data-toggle="pill" href="#bankingHome" role="tab" aria-controls="bankingHome" aria-selected="true" style="color: white">Account Home</a>
                                 <a class="nav-link m-1" id="bankingWithdraw-tab" data-toggle="pill" href="#bankingWithdraw" role="tab" aria-controls="bankingWithdraw" aria-selected="false" style="color: white">Withdrawals</a>
                                 <a class="nav-link m-1" id="bankingDeposit-tab" data-toggle="pill" href="#bankingDeposit" role="tab" aria-controls="bankingDeposit" aria-selected="false" style="color: white">Deposit</a>
-                                <a class="nav-link m-1" id="bankingTransfer-tab" data-toggle="pill" href="#bankingTransfer" role="tab" aria-controls="bankingTransfer" aria-selected="false" style="color: white">Transfer</a>
                                 <a class="nav-link m-1" id="bankingStatement-tab" data-toggle="pill" href="#bankingStatement" role="tab" aria-controls="bankingStatement" aria-selected="false" style= "color: white">Statement</a>
                             </div>
                         </div>
@@ -45,10 +44,9 @@
                                 <div class="card-header">Account Information</div>
                                 <div class="card-body">
                                     <p class="card-text" style="color: white;"><small>
-                                        Account Name: <span id="accountName"></span><br>
-                                        Account Number: <span id="accountNumber"></span><br>
-                                        <!--Account Sort Code: <span id="accountSortCode">-->
-
+                                        Account Name : <br><span id="accountName"></span><br>
+										<br>
+                                        Account Number : <br><span id="accountNumber"></span><br>
                                         </span></small></p>
                                 </div>
                             </div>
@@ -82,7 +80,7 @@
                                         <div class="card-header"><i class="fad fa-fw fa-money-bill-wave"></i> Current Bank Balance:</div>
                                         <div class="card-body">
                                             <h5 class="card-title" style="font-weight: bolder; color: #28a745;" id="currentBalance"></h5>
-                                            <p class="card-text" style="color: white;">Total Amount Available To Withdraw/Transfer</p>
+                                            <p class="card-text" style="color: white;">Total Amount Available To Withdraw</p>
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +126,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12" style="font-size: 12px; color: white;">
-                                    Withdrawal money from your bank account. To withdrawal money from your savings account, first you must transfer it.
+                                    Withdrawal money from your bank account.
                                 </div>
                             </div>
                             <div class="row" style="position: relative; top: 20px;">
@@ -137,7 +135,7 @@
                                         <div class="card-header"><i class="fad fa-fw fa-money-bill-wave"></i> Current Bank Balance:</div>
                                         <div class="card-body">
                                             <h5 class="card-title" style="font-weight: bolder; color: #28a745;" id="currentBalance1"></h5>
-                                            <p class="card-text" style="color: white;">Total Amount Available To Withdraw/Transfer</p>
+                                            <p class="card-text" style="color: white;">Total Amount Available To Withdraw</p>
                                         </div>
                                     </div>
                                 </div>
@@ -165,7 +163,7 @@
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-3 my-auto" style="font-size: 19px; color: white;"><label for="withdrawAmount"><small>Amount to Withdraw:</small></label></div>
-                                                    <div class="col-9"><input type="number" placeholder="$" class="form-control" id="withdrawAmount" name="withdrawAmount"></div>
+                                                    <div class="col-9"><input type="number" placeholder="$" class="form-control" id="withdrawAmount" name="withdrawAmount" style="color:white; background-color:black;"></div>
                                                 </div>
                                             </div>
 
@@ -187,7 +185,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12" style="font-size: 12px; color: white;">
-                                    Deposit money into your bank account. To deposit money into your savings account, simply transfer it from your bank after your initial deposit.
+                                    Deposit money into your bank account.
                                 </div>
                             </div>
                             <div class="row" style="position: relative; top: 20px;">
@@ -196,7 +194,7 @@
                                         <div class="card-header"><i class="fad fa-fw fa-money-bill-wave"></i> Current Bank Balance:</div>
                                         <div class="card-body">
                                             <h5 class="card-title" style="font-weight: bolder; color: #28a745;" id="currentBalance2"></h5>
-                                            <p class="card-text" style="color: white;">Total Amount Available To Withdraw/Transfer</p>
+                                            <p class="card-text" style="color: white;">Total Amount Available To Withdraw</p>
                                         </div>
                                     </div>
                                 </div>
@@ -224,7 +222,7 @@
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-3 my-auto" style="font-size: 19px; color: white;"><label for="depositAmount"><small>Amount to Deposit:</small></label></div>
-                                                    <div class="col-9"><input type="number" placeholder="$" class="form-control" id="depositAmount" name="depositAmount"></div>
+                                                    <div class="col-9"><input type="number" placeholder="$" class="form-control" id="depositAmount" name="depositAmount" style="color:white; background-color:black;"></div>
                                                 </div>
                                             </div>
 
@@ -234,58 +232,6 @@
                             </div>
                             <div class="row" style="position: relative; top: 20px;">
                                 <div class="col-12 text-center"><button class="btn" style="background-color: #28a745; color: white" id="initiateDeposit">Complete Deposit</button></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="bankingTransfer" role="tabpanel" aria-labelledby="bankingTransfer-tab">
-
-                        <div class="container-fluid p-2" style="position: relative; top: 54px;">
-                            <div class="row">
-                                <div class="col-12 title">
-                                    <h3 style="font-size: 35px;">Transfers</h3>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12" style="font-size: 12px; color:white">Transfer money to another account simply by entering the dedicated number of that account and the amount to transfer.
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12" style="position: relative; top: 20px;">
-                                    <div class="card mb-3" style="background:rgba(51, 51, 51, 0.8); color: white;">
-                                        <div class="card-body">
-                                            <div class="container-fluid">
-                                                <div class="row" id="transferError" style="display:none;">
-                                                    <div class="col-12">
-                                                        <div class="alert alert-danger" role="alert" id="transferErrorMsg">
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <!-- form -->
-                                                        <div class="container-fluid">
-                                                            <div class="row m-1">
-                                                                <div class="col-3 my-auto" style="font-size: 19px; color: white;"><label for="transferAcctNo"><small>Account Number:</small></label></div>
-                                                                <div class="col-9"><input type="text" id="transferAcctNo" name="transferAcctNo" class="form-control"></div>
-                                                            </div>
-                                                            <div class="row m-1">
-                                                                <div class="col-3 my-auto" style="font-size: 19px; color: white;"><label for="transferAmount"><small>Amount To Transfer:</small></label></div>
-                                                                <div class="col-9"><input type="number" id="transferAmount" name="transferAmount" class="form-control" placeholder="$"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12 text-center" style="position: relative; top: 20px;">
-                                    <button class="btn" id="initiateTransfer" style="background-color: #28a745; color: white">Complete Transfer</button>
-                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,41 +1,5 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 
-CreateThread(function()
-    local accts = MySQL.query.await('SELECT * FROM bank_accounts WHERE account_type = ?', { 'Business' })
-    if accts[1] ~= nil then
-        for _, v in pairs(accts) do
-            local acctType = v.business
-            if businessAccounts[acctType] == nil then
-                businessAccounts[acctType] = {}
-            end
-            businessAccounts[acctType][tonumber(v.businessid)] = GeneratebusinessAccount(tonumber(v.account_number), tonumber(v.sort_code), tonumber(v.businessid))
-            while businessAccounts[acctType][tonumber(v.businessid)] == nil do Wait(0) end
-        end
-    end
-
-    local savings = MySQL.query.await('SELECT * FROM bank_accounts WHERE account_type = ?', { 'Savings' })
-    if savings[1] ~= nil then
-        for _, v in pairs(savings) do
-            savingsAccounts[v.citizenid] = generateSavings(v.citizenid)
-        end
-    end
-
-    local gangs = MySQL.query.await('SELECT * FROM bank_accounts WHERE account_type = ?', { 'Gang' })
-    if gangs[1] ~= nil then
-        for _, v in pairs(gangs) do
-            gangAccounts[v.gangid] = loadGangAccount(v.gangid)
-        end
-    end
-end)
-
-exports('business', function(acctType, bid)
-    if businessAccounts[acctType] then
-        if businessAccounts[acctType][tonumber(bid)] then
-            return businessAccounts[acctType][tonumber(bid)]
-        end
-    end
-end)
-
 exports('registerAccount', function(cid)
     local _cid = tonumber(cid)
     currentAccounts[_cid] = generateCurrent(_cid)
@@ -45,143 +9,6 @@ exports('current', function(cid)
     if currentAccounts[cid] then
         return currentAccounts[cid]
     end
-end)
-
-exports('debitcard', function(cardnumber)
-    if bankCards[tonumber(cardnumber)] then
-        return bankCards[tonumber(cardnumber)]
-    else
-        return false
-    end
-end)
-
-exports('savings', function(cid)
-    if savingsAccounts[cid] then
-        return savingsAccounts[cid]
-    end
-end)
-
-exports('gang', function(gid)
-    if gangAccounts[gid] then
-        return gangAccounts[gid]
-    end
-end)
-
---[[ -- Only used by the following "rsg-banking:initiateTransfer"
-
-local function getCharacterName(cid)
-    local src = source
-    local player = RSGCore.Functions.GetPlayer(src)
-    local name = player.PlayerData.name
-end
-
-local function checkAccountExists(acct, sc)
-    local success
-    local cid
-    local actype
-    local processed = false
-    local exists = MySQL.query.await('SELECT * FROM bank_accounts WHERE account_number = ? AND sort_code = ?', { acct, sc })
-    if exists[1] ~= nil then
-        success = true
-        cid = exists[1].character_id
-        actype = exists[1].account_type
-    else
-        success = false
-        cid = false
-        actype = false
-    end
-    processed = true
-    repeat Wait(0) until processed == true
-    return success, cid, actype
-end
-
-]]
-
-RegisterNetEvent('rsg-banking:initiateTransfer', function(_)
-    --[[
-    local _src = source
-    local _startChar = RSGCore.Functions.GetPlayer(_src)
-    while _startChar == nil do Wait(0) end
-
-    local checkAccount, cid, acType = checkAccountExists(data.account, data.sortcode)
-    while checkAccount == nil do Wait(0) end
-
-    if (checkAccount) then
-        local receiptName = getCharacterName(cid)
-        while receiptName == nil do Wait(0) end
-
-        if receiptName ~= false or receiptName ~= nil then
-            local userOnline = exports.rsg-base:checkOnline(cid)
-
-            if userOnline ~= false then
-                -- User is online so we can do a straght transfer
-                local _targetUser = exports.rsg-base:Source(userOnline)
-                if acType == "Current" then
-                    local targetBank = _targetUser:Bank().Add(data.amount, 'Bank Transfer from '.._startChar.GetName())
-                    while targetBank == nil do Wait(0) end
-                    local bank = _startChar:Bank().Remove(data.amount, 'Bank Transfer to '..receiptName)
-                    TriggerClientEvent('pw:notification:SendAlert', _src, {type = "inform", text = "You have sent a bank transfer to "..receiptName..' for the amount of $'..data.amount, length = 5000})
-                    TriggerClientEvent('pw:notification:SendAlert', userOnline, {type = "inform", text = "You have received a bank transfer from ".._startChar.GetName()..' for the amount of $'..data.amount, length = 5000})
-                    TriggerClientEvent('rsg-banking:openBankScreen', _src)
-                    TriggerClientEvent('rsg-banking:successAlert', _src, 'You have sent a bank transfer to '..receiptName..' for the amount of $'..data.amount)
-                else
-                    local targetBank = savingsAccounts[cid].AddMoney(data.amount, 'Bank Transfer from '.._startChar.GetName())
-                    while targetBank == nil do Wait(0) end
-                    local bank = _startChar:Bank().Remove(data.amount, 'Bank Transfer to '..receiptName)
-                    TriggerClientEvent('pw:notification:SendAlert', _src, {type = "inform", text = "You have sent a bank transfer to "..receiptName..' for the amount of $'..data.amount, length = 5000})
-                    TriggerClientEvent('pw:notification:SendAlert', userOnline, {type = "inform", text = "You have received a bank transfer from ".._startChar.GetName()..' for the amount of $'..data.amount, length = 5000})
-                    TriggerClientEvent('rsg-banking:openBankScreen', _src)
-                    TriggerClientEvent('rsg-banking:successAlert', _src, 'You have sent a bank transfer to '..receiptName..' for the amount of $'..data.amount)
-                end
-
-            else
-                -- User is not online so we need to manually adjust thier bank balance.
-                    MySQL.scalar("SELECT `amount` FROM `bank_accounts` WHERE `account_number` = @an AND `sort_code` = @sc AND `character_id` = @cid", {
-                        ['@an'] = data.account,
-                        ['@sc'] = data.sortcode,
-                        ['@cid'] = cid
-                    }, function(currentBalance)
-                        if currentBalance ~= nil then
-                            local newBalance = currentBalance + data.amount
-                            if newBalance ~= currentBalance then
-                                MySQL.query("UPDATE `bank_accounts` SET `amount` = @newBalance WHERE `account_number` = @an AND `sort_code` = @sc AND `character_id` = @cid", {
-                                    ['@an'] = data.account,
-                                    ['@sc'] = data.sortcode,
-                                    ['@cid'] = cid,
-                                    ['@newBalance'] = newBalance
-                                }, function(rowsChanged)
-                                    if rowsChanged == 1 then
-                                        local time = os.date("%Y-%m-%d %H:%M:%S")
-                                        MySQL.insert("INSERT INTO `bank_statements` (`account`, `character_id`, `account_number`, `sort_code`, `deposited`, `withdraw`, `balance`, `date`, `type`) VALUES (@accountty, @cid, @account, @sortcode, @deposited, @withdraw, @balance, @date, @type)", {
-                                            ['@accountty'] = acType,
-                                            ['@cid'] = cid,
-                                            ['@account'] = data.account,
-                                            ['@sortcode'] = data.sortcode,
-                                            ['@deposited'] = data.amount,
-                                            ['@withdraw'] = nil,
-                                            ['@balance'] = newBalance,
-                                            ['@date'] = time,
-                                            ['@type'] = 'Bank Transfer from '.._startChar.GetName()
-                                        }, function(statementUpdated)
-                                            if statementUpdated > 0 then
-                                                local bank = _startChar:Bank().Remove(data.amount, 'Bank Transfer to '..receiptName)
-                                                TriggerClientEvent('pw:notification:SendAlert', _src, {type = "inform", text = "You have sent a bank transfer to "..receiptName..' for the amount of $'..data.amount, length = 5000})
-                                                TriggerClientEvent('rsg-banking:openBankScreen', _src)
-                                                TriggerClientEvent('rsg-banking:successAlert', _src, 'You have sent a bank transfer to '..receiptName..' for the amount of $'..data.amount)
-                                            end
-                                        end)
-                                    end
-                                end)
-                            end
-                        end
-                    end)
-            end
-        end
-    else
-        -- Send error to client that account details do no exist.
-        TriggerClientEvent('rsg-banking:transferError', _src, 'The account details entered could not be located.')
-    end
-]]
 end)
 
 local function format_int(number)
@@ -210,86 +37,20 @@ local function addBankStatement(cid, accountType, amountDeposited, amountWithdra
     })
 end
 
--- Get all bank cards for the current player
-local function getBankCard(cid)
-    local bankCard = MySQL.query.await('SELECT * FROM bank_cards WHERE citizenid = ? ORDER BY record_id DESC LIMIT 1', { cid })
-    return bankCard[1]
-end
-
--- Adds a new bank card to the database, replaces existing card if it exists
-local function addNewBankCard(citizenid, cardNumber, cardPin, cardActive, cardLocked, cardType)
-    -- The use of REPLACE will act just like INSERT if there are no results that match on the citizenid key
-    -- If there are existing results, it will replace the item with the new data
-    MySQL.insert('REPLACE INTO bank_cards (`citizenid`, `cardNumber`, `cardPin`, `cardActive`, `cardLocked`, `cardType`) VALUES (?, ?, ?, ?, ?, ?)', {
-        citizenid,
-        cardNumber,
-        cardPin,
-        cardActive,
-        cardLocked,
-        cardType
-    })
-end
-
--- Toggle the lock status of a bank card
-local function toggleBankCardLock(cid, lockStatus)
-    MySQL.update('UPDATE bank_cards SET cardLocked = ? WHERE citizenid = ?', { lockStatus, cid})
-end
-
 RSGCore.Functions.CreateCallback('rsg-banking:getBankingInformation', function(source, cb)
     local xPlayer = RSGCore.Functions.GetPlayer(source)
     if not xPlayer then return cb(nil) end
     local bankStatements = getBankStatements(xPlayer.PlayerData.citizenid)
-    local bankCard = getBankCard(xPlayer.PlayerData.citizenid)
 
     local banking = {
         ['name'] = xPlayer.PlayerData.charinfo.firstname .. ' ' .. xPlayer.PlayerData.charinfo.lastname,
         ['bankbalance'] = '$'.. format_int(xPlayer.PlayerData.money['bank']),
         ['cash'] = '$'.. format_int(xPlayer.PlayerData.money['cash']),
         ['accountinfo'] = xPlayer.PlayerData.charinfo.account,
-        ['cardInformation'] = bankCard,
         ['statement'] = bankStatements,
     }
-    if savingsAccounts[xPlayer.PlayerData.citizenid] then
-        local cid = xPlayer.PlayerData.citizenid
-        banking['savings'] = {
-            ['amount'] = savingsAccounts[cid].GetBalance(),
-            ['details'] = savingsAccounts[cid].getAccount(),
-            ['statement'] = savingsAccounts[cid].getStatement(),
-        }
-    end
 
     cb(banking)
-end)
-
--- Creates a new bank card.
--- If the player already has a card it will replace the existing card with the new one
-RegisterNetEvent('rsg-banking:createBankCard', function(pin)
-    local src = source
-    local xPlayer = RSGCore.Functions.GetPlayer(src)
-    local cid = xPlayer.PlayerData.citizenid
-    local cardNumber = math.random(1000000000000000,9999999999999999)
-    xPlayer.Functions.SetCreditCard(cardNumber)
-    local info = {}
-    local selectedCard = Config.cardTypes[math.random(1,#Config.cardTypes)]
-    info.citizenid = cid
-    info.name = xPlayer.PlayerData.charinfo.firstname .. ' ' .. xPlayer.PlayerData.charinfo.lastname
-    info.cardNumber = cardNumber
-    info.cardPin = tonumber(pin)
-    info.cardActive = true
-    info.cardType = selectedCard
-
-    if selectedCard == "visa" then
-        xPlayer.Functions.AddItem('visa', 1, nil, info)
-    elseif selectedCard == "mastercard" then
-        xPlayer.Functions.AddItem('mastercard', 1, nil, info)
-    end
-
-    addNewBankCard(cid, cardNumber, info.cardPin, info.cardActive, 0, info.cardType)
-
-    TriggerClientEvent('rsg-banking:openBankScreen', src)
-    TriggerClientEvent('rsg-banking:successAlert', src, Lang:t('success.debit_card'))
-
-    TriggerEvent('rsg-log:server:CreateLog', 'banking', 'Banking', 'lightgreen', "**"..GetPlayerName(xPlayer.PlayerData.source) .. " (citizenid: "..xPlayer.PlayerData.citizenid.." | id: "..xPlayer.PlayerData.source..")** successfully ordered a debit card")
 end)
 
 RegisterNetEvent('rsg-banking:doQuickDeposit', function(amount)
@@ -312,15 +73,6 @@ RegisterNetEvent('rsg-banking:doQuickDeposit', function(amount)
     end
 end)
 
-RegisterNetEvent('rsg-banking:toggleCard', function(toggle)
-    local src = source
-    local xPlayer = RSGCore.Functions.GetPlayer(src)
-
-    while xPlayer == nil do Wait(0) end
-
-    toggleBankCardLock(xPlayer.PlayerData.citizenid, toggle)
-end)
-
 RegisterNetEvent('rsg-banking:doQuickWithdraw', function(amount, _)
     local src = source
     local xPlayer = RSGCore.Functions.GetPlayer(src)
@@ -339,71 +91,6 @@ RegisterNetEvent('rsg-banking:doQuickWithdraw', function(amount, _)
         end
     end
 end)
-
-RegisterNetEvent('rsg-banking:updatePin', function(currentBankCard, newPin)
-    if newPin ~= nil then
-        local src = source
-        local xPlayer = RSGCore.Functions.GetPlayer(src)
-        while xPlayer == nil do Wait(0) end
-
-        MySQL.update('UPDATE bank_cards SET cardPin = ? WHERE record_id = ?', {
-            newPin,
-            currentBankCard.record_id
-        }, function(result)
-            if result == 1 then
-                TriggerClientEvent('rsg-banking:openBankScreen', src)
-                TriggerClientEvent('rsg-banking:successAlert', src, Lang:t('success.updated_pin'))
-            else
-                TriggerClientEvent('RSGCore:Notify', src, 'Error updating pin', "error")
-            end
-        end)
-    end
-end)
-
-RegisterNetEvent('rsg-banking:savingsDeposit', function(amount)
-    local src = source
-    local xPlayer = RSGCore.Functions.GetPlayer(src)
-    while xPlayer == nil do Wait(0) end
-    local currentBank = xPlayer.Functions.GetMoney('bank')
-
-    if tonumber(amount) <= currentBank then
-        local bank = xPlayer.Functions.RemoveMoney('bank', tonumber(amount))
-        local savings = savingsAccounts[xPlayer.PlayerData.citizenid].AddMoney(tonumber(amount), Lang:t('info.current_to_savings'))
-        while bank == nil do Wait(0) end
-        while savings == nil do Wait(0) end
-        TriggerClientEvent('rsg-banking:openBankScreen', src)
-        TriggerClientEvent('rsg-banking:successAlert', src, Lang:t('success.savings_deposit', {value = tostring(amount)}))
-        TriggerEvent('rsg-log:server:CreateLog', 'banking', 'Banking', 'lightgreen', "**"..GetPlayerName(xPlayer.PlayerData.source) .. " (citizenid: "..xPlayer.PlayerData.citizenid.." | id: "..xPlayer.PlayerData.source..")** made a savings deposit of $"..tostring(amount).." successfully..")
-    end
-end)
-
-RegisterNetEvent('rsg-banking:savingsWithdraw', function(amount)
-    local src = source
-    local xPlayer = RSGCore.Functions.GetPlayer(src)
-    while xPlayer == nil do Wait(0) end
-    local currentSavings = savingsAccounts[xPlayer.PlayerData.citizenid].GetBalance()
-
-    if tonumber(amount) <= currentSavings then
-        local savings = savingsAccounts[xPlayer.PlayerData.citizenid].RemoveMoney(tonumber(amount), Lang:t('info.savings_to_current'))
-        local bank = xPlayer.Functions.AddMoney('bank', tonumber(amount), 'banking-quick-withdraw')
-        while bank == nil do Wait(0) end
-        while savings == nil do Wait(0) end
-        TriggerClientEvent('rsg-banking:openBankScreen', src)
-        TriggerClientEvent('rsg-banking:successAlert', src, Lang:t('success.savings_withdrawal', {value = tostring(amount)}))
-        TriggerEvent('rsg-log:server:CreateLog', 'banking', 'Banking', 'red', "**"..GetPlayerName(xPlayer.PlayerData.source) .. " (citizenid: "..xPlayer.PlayerData.citizenid.." | id: "..xPlayer.PlayerData.source..")** made a savings withdrawal of $"..tostring(amount).." successfully.")
-    end
-end)
-
-RegisterNetEvent('rsg-banking:createSavingsAccount', function()
-    local src = source
-    local xPlayer = RSGCore.Functions.GetPlayer(src)
-    local success = createSavingsAccount(xPlayer.PlayerData.citizenid)
-    repeat Wait(0) until success ~= nil
-    TriggerClientEvent('rsg-banking:openBankScreen', src)
-    TriggerClientEvent('rsg-banking:successAlert', src, Lang:t('success.opened_savings'))
-    TriggerEvent('rsg-log:server:CreateLog', 'banking', 'Banking', "lightgreen", "**"..GetPlayerName(xPlayer.PlayerData.source) .. " (citizenid: "..xPlayer.PlayerData.citizenid.." | id: "..xPlayer.PlayerData.source..")** opened a savings account")
-end)
-
 
 RSGCore.Commands.Add('givecash', Lang:t('command.givecash'), {{name = 'id', help = 'Player ID'}, {name = 'amount', help = 'Amount'}}, true, function(source, args)
   local src = source
