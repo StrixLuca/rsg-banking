@@ -1,4 +1,4 @@
 # rsg-banking
 
 # Credits 
-- Original Resouce : https://github.com/qbcore-framework/qb-banking
+- Sinatra#0101 for the original resource
