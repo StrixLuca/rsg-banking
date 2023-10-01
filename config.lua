@@ -7,6 +7,10 @@ Config.Blip = {
     blipScale = 0.2 -- Config.Blip.blipScale
 }
 
+-- safe deposit box
+Config.StorageMaxWeight = 500000
+Config.StorageMaxSlots = 5
+
 Config.Keybind = 'J'
 
 Config.BankLocations = {

@@ -53,6 +53,11 @@ RegisterNUICallback('CloseNUI', function()
     CloseBank()
 end)
 
+RegisterNUICallback('SafeDeposit', function()
+    CloseBank()
+    TriggerEvent('rsg-banking:client:safedeposit')
+end)
+
 AddEventHandler("rsg-banking:client:OpenBanking", function()
     OpenBank()
 end)
@@ -65,4 +70,16 @@ end)
 RegisterNetEvent('rsg-banking:client:UpdateBanking', function(newbalance)
     if not BankOpen then return end
     SendNUIMessage({action = "UPDATE_BALANCE", balance = newbalance})
+end)
+
+-- bank safe deposit box
+RegisterNetEvent('rsg-banking:client:safedeposit', function()
+    RSGCore.Functions.GetPlayerData(function(PlayerData)
+        local cid = PlayerData.citizenid
+        local ZoneTypeId = 1
+        local x,y,z =  table.unpack(GetEntityCoords(PlayerPedId()))
+        local town = Citizen.InvokeNative(0x43AD8FC02B429D33, x,y,z, ZoneTypeId)
+        TriggerServerEvent("inventory:server:OpenInventory", "stash", cid..town, { Config.StorageMaxWeight, Config.StorageMaxSlots })
+        TriggerEvent("inventory:client:SetCurrentStash", cid..town)
+    end)
 end)

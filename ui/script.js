@@ -31,6 +31,11 @@ $(".close").click(function() {
     $.post(`https://${GetParentResourceName()}/CloseNUI`);
 });
 
+$(".safedeposit").click(function() {
+    $("#bankmenu").fadeOut(200);
+    $.post(`https://${GetParentResourceName()}/SafeDeposit`);
+});
+
 $(".withdraw").click(function() {
     TransactionType = 1;
     $("#bankmenu").fadeOut(200, function() {
