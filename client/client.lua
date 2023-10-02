@@ -79,7 +79,7 @@ RegisterNetEvent('rsg-banking:client:safedeposit', function()
         local ZoneTypeId = 1
         local x,y,z =  table.unpack(GetEntityCoords(PlayerPedId()))
         local town = Citizen.InvokeNative(0x43AD8FC02B429D33, x,y,z, ZoneTypeId)
-        TriggerServerEvent("inventory:server:OpenInventory", "stash", cid..town, { Config.StorageMaxWeight, Config.StorageMaxSlots })
+        TriggerServerEvent("inventory:server:OpenInventory", "stash", cid..town, { maxweight = Config.StorageMaxWeight, slots = Config.StorageMaxSlots } )
         TriggerEvent("inventory:client:SetCurrentStash", cid..town)
     end)
 end)
