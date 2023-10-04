@@ -69,6 +69,54 @@ RegisterNetEvent("rsg-banking:server:transact", function(type, amount)
     end
 end)
 
+-- moneyclip made usable
+RSGCore.Functions.CreateUseableItem('moneyclip', function(source, item)
+    local src = source
+    local Player = RSGCore.Functions.GetPlayer(src)
+
+    if not Player then return end
+
+    local itemData = Player.Functions.GetItemBySlot(item.slot)
+
+    if not itemData then return end
+
+    local amount = itemData.info.money
+
+    if Player.Functions.RemoveItem(item.name, 1, item.slot) then
+        Player.Functions.AddMoney('cash', amount)
+        lib.notify({ title = 'Money Clip Used', description = 'You\'ve got $'..amount..' cash from this Money Clip!', type = 'success' })
+    end
+end)
+
+-- create moneyclip command
+RSGCore.Commands.Add('moneyclip', 'Make Money Clip', {{ name = 'amount', help = 'How much money do you want convert?' }}, true, function(source, args)
+    local src = source
+    local args1 = tonumber(args[1])
+
+    if args1 <= 0 then
+        lib.notify({ title = 'Insufficient Funds', description = 'please enter the correct amount!', type = 'error' })
+        return
+    end
+
+    local Player = RSGCore.Functions.GetPlayer(src)
+
+    if not Player then return end
+
+    local money = Player.Functions.GetMoney('cash')
+
+    if money and money >= args1 then
+        if Player.Functions.RemoveMoney('cash', args1, 'give-money') then
+            local info =
+            {
+                money = args1
+            }
+
+            Player.Functions.AddItem('moneyclip', 1, false, info)
+            lib.notify({ title = 'Money Clip Converted', description = 'You\'ve just converted $'..args1..' cash into a Money Clip!', type = 'success' })
+        end
+    end
+end, 'user')
+
 --------------------------------------------------------------------------------------------------
 -- start version check
 --------------------------------------------------------------------------------------------------
