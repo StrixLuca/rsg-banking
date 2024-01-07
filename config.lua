@@ -43,43 +43,45 @@ Config.BankLocations = {
     },
 }
 
-Config.BankDoors = { --Doors that will always be open unless robbery has started
-    -- Valentine Savings Bank
-    2642457609, -- main door
-    3886827663, -- main door
-    1340831050, -- bared right
-    2343746133, -- bared left
-    334467483, -- inner door1
-    3718620420, -- inner door2
-    576950805, -- vault door
+Config.BankDoors = {
+
+    -- valentine ( open = 0 / locked = 1)
+    { door = 2642457609, state = 0 }, -- main door
+    { door = 3886827663, state = 0 }, -- main door
+    { door = 1340831050, state = 1 }, -- bared right
+    { door = 2343746133, state = 1 }, -- bared left
+    { door = 334467483,  state = 1 }, -- inner door1
+    { door = 3718620420, state = 1 }, -- inner door2
+    { door = 576950805,  state = 1 }, -- valut
+
+    -- rhodes  ( open = 0 / locked = 1)
+    { door = 3317756151, state = 0 }, -- main door
+    { door = 3088209306, state = 0 }, -- main door
+    { door = 2058564250, state = 1 }, -- inner door1
+    { door = 3142122679, state = 1 }, -- inner door2
+    { door = 1634148892, state = 1 }, -- inner door3
+    { door = 3483244267, state = 1 }, -- valut
+
+    -- saint denis ( open = 0 / locked = 1)
+    { door = 2158285782, state = 0 }, -- main door
+    { door = 1733501235, state = 0 }, -- main door
+    { door = 2089945615, state = 0 }, -- main door
+    { door = 2817024187, state = 0 }, -- main door
+    { door = 1830999060, state = 1 }, -- inner private door
+    { door = 965922748,  state = 1 }, -- manager door
+    { door = 1634115439, state = 1 }, -- manager door
+    { door = 1751238140, state = 1 }, -- vault
+
+    -- blackwater
+    { door = 531022111,  state = 0 }, -- main door
+    { door = 2117902999, state = 1 }, -- inner door
+    { door = 2817192481, state = 1 }, -- manager door
+    { door = 1462330364, state = 1 }, -- vault door
     
-    -- Bank of Rhodes
-    3317756151, -- main door
-    3088209306, -- main door
-    2058564250, -- inner door1
-    3142122679, -- inner door2
-    1634148892, -- inner door3
-    3483244267, -- vault
-  
-    -- Lemoyne National Bank Saint Denis
-    2158285782, -- main door
-    1733501235, -- main door
-    2089945615, -- main door
-    2817024187, -- main door
-    1830999060, -- inner private door
-    965922748, -- manager door
-    1634115439, -- manager door
-    1751238140, -- vault
-    
-    -- West Elizabeth Co-Operative Bank Blackwater
-    531022111, -- main door
-    2117902999, -- inner door
-    2817192481, -- manager door
-    1462330364, -- vault door
-    
-    -- Bank of Armadillo
-    3101287960, -- main door
-    3550475905, -- inner door
-    1329318347, -- inner door
-    1366165179, -- back door
+    -- armadillo
+    { door = 3101287960, state = 0 }, -- main door
+    { door = 3550475905, state = 1 }, -- inner door
+    { door = 1329318347, state = 1 }, -- inner door
+    { door = 1366165179, state = 1 }, -- back door
+
 }
