@@ -30,7 +30,7 @@ end)
 -- open bank with opening hours
 local OpenBank = function()
     local hour = GetClockHours()
-    if (hour < Config.OpenTime) or (hour > Config.CloseTime) then
+    if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
         lib.notify({
             title = 'Bank Closed',
             description = 'come back after '..Config.OpenTime..'am',
