@@ -41,6 +41,12 @@ Config.BankLocations = {
         coords = vector3(-813.1633, -1277.486, 43.63771),
         showblip = true
     },
+    {
+        name = 'Armadillo Bank',
+        id = 'ardbank',
+        coords = vector3(-3666.25, -2626.57, -13.59),
+        showblip = true
+    },
 }
 
 Config.BankDoors = {
