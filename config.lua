@@ -11,7 +11,10 @@ Config.Blip = {
 Config.StorageMaxWeight = 500000
 Config.StorageMaxSlots = 5
 
+-- settings
 Config.Keybind = 'J'
+Config.OpenTime = 9 -- hrs : 24hour clock
+Config.CloseTime = 17 -- hrs : 24hour clock
 
 Config.BankLocations = {
     {

@@ -27,8 +27,20 @@ Citizen.CreateThread(function()
     end
 end)
 
--- open bank
+-- open bank with opening hours
 local OpenBank = function()
+    local hour = GetClockHours()
+    if (hour < Config.OpenTime) or (hour > Config.CloseTime) then
+        lib.notify({
+            title = 'Bank Closed',
+            description = 'come back after '..Config.OpenTime..'am',
+            type = 'error',
+            icon = 'fa-solid fa-building-columns',
+            iconAnimation = 'shake',
+            duration = 7000
+        })
+        return
+    end
     RSGCore.Functions.TriggerCallback('rsg-banking:getBankingInformation', function(banking)
         if banking ~= nil then
             SendNUIMessage({action = "OPEN_BANK", balance = banking})
