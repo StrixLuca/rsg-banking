@@ -1,12 +1,5 @@
 Config = {}
 
--- blip settings
--- Config.Blip = {
-    -- blipName = 'Bank', -- Config.Blip.blipName
-    -- blipSprite = 'blip_proc_bank',  -- Config.Blip.blipSprite
-    -- blipScale = 0.2 -- Config.Blip.blipScale
-}
-
 -- safe deposit box
 Config.StorageMaxWeight = 500000
 Config.StorageMaxSlots = 5
