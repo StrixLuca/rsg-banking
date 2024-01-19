@@ -53,18 +53,18 @@ CreateThread(function()
             for _, v in pairs(Config.BankLocations) do
                 if v.showblip == true then
                     local BankingBlip = Citizen.InvokeNative(0x554D9D53F696D002, joaat('BLIP_STYLE_DEBUG_RED'), v.coords)
-                    SetBlipSprite(BankingBlip,  joaat(Config.Blip.blipSprite), true)
-                    SetBlipScale(Config.Blip.blipScale, 0.2)
-                    Citizen.InvokeNative(0x9CB1A1623062F402, BankingBlip, Config.Blip.blipName..' Closed')
+                    SetBlipSprite(BankingBlip,  joaat(v.blipsprite), true)
+                    SetBlipScale(BankingBlip, v.blipscale)
+                    Citizen.InvokeNative(0x9CB1A1623062F402, BankingBlip, v.name..' Closed')
                 end
             end
         else
             for _, v in pairs(Config.BankLocations) do
                 if v.showblip == true then
                     local BankingBlip = Citizen.InvokeNative(0x554D9D53F696D002, joaat('BLIP_STYLE_DEBUG_GREEN'), v.coords)
-                    SetBlipSprite(BankingBlip,  joaat(Config.Blip.blipSprite), true)
-                    SetBlipScale(Config.Blip.blipScale, 0.2)
-                    Citizen.InvokeNative(0x9CB1A1623062F402, BankingBlip, Config.Blip.blipName..' Open')
+                    SetBlipSprite(BankingBlip,  joaat(v.blipsprite), true)
+                    SetBlipScale(BankingBlip, v.blipscale)
+                    Citizen.InvokeNative(0x9CB1A1623062F402, BankingBlip, v.name..' Open')
                 end
             end
         end
