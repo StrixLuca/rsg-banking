@@ -1,10 +1,10 @@
 Config = {}
 
 -- blip settings
-Config.Blip = {
-    blipName = 'Bank', -- Config.Blip.blipName
-    blipSprite = 'blip_proc_bank', -- Config.Blip.blipSprite
-    blipScale = 0.2 -- Config.Blip.blipScale
+-- Config.Blip = {
+    -- blipName = 'Bank', -- Config.Blip.blipName
+    -- blipSprite = 'blip_proc_bank',  -- Config.Blip.blipSprite
+    -- blipScale = 0.2 -- Config.Blip.blipScale
 }
 
 -- safe deposit box
@@ -21,31 +21,41 @@ Config.BankLocations = {
         name = 'Valentine Bank',
         id = 'valbank',
         coords = vector3(-308.4189, 775.8842, 118.7017),
-        showblip = true
+        showblip = true,
+        blipsprite = 'blip_proc_bank', 
+        blipscale = 0.2
     },
     {
         name = 'Rhodes Bank',
         id = 'rhobank',
         coords = vector3(1292.307, -1301.539, 77.04012),
-        showblip = true
+        showblip = true,
+        blipsprite = 'blip_proc_bank', 
+        blipscale = 0.2
     },
     {
         name = 'Saint Denis Bank',
         id = 'stdenisbank',
         coords = vector3(2644.579, -1292.313, 52.24956),
-        showblip = true
+        showblip = true,
+        blipsprite = 'blip_proc_bank', 
+        blipscale = 0.2
     },
     {
         name = 'Blackwater Bank',
         id = 'blkbank',
         coords = vector3(-813.1633, -1277.486, 43.63771),
-        showblip = true
+        showblip = true,
+        blipsprite = 'blip_proc_bank', 
+        blipscale = 0.2
     },
     {
         name = 'Armadillo Bank',
         id = 'ardbank',
         coords = vector3(-3666.25, -2626.57, -13.59),
-        showblip = true
+        showblip = true,
+        blipsprite = 'blip_proc_bank', 
+        blipscale = 0.2
     },
 }
 
