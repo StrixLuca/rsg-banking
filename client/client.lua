@@ -54,18 +54,30 @@ local OpenBank = function()
     end)
 end
 
+-- get bank hours function
+local GetBankHours = function()
+    local hour = GetClockHours()
+    if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
+        for k, v in pairs(SpawnedBankBilps) do
+            Citizen.InvokeNative(0x662D364ABF16DE2F, v, joaat('BLIP_MODIFIER_MP_COLOR_2'))
+        end
+    else
+        for k, v in pairs(SpawnedBankBilps) do
+            Citizen.InvokeNative(0x662D364ABF16DE2F, v, joaat('BLIP_MODIFIER_MP_COLOR_8'))
+        end
+    end           
+    Wait(60000) -- every min
+end
+
+-- get bank hours on player loading
+RegisterNetEvent('RSGCore:Client:OnPlayerLoaded', function()
+    GetBankHours()
+end)
+
+-- update bank hours every min
 CreateThread(function()
     while true do
-        local hour = GetClockHours()
-        if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
-            for k, v in pairs(SpawnedBankBilps) do
-                Citizen.InvokeNative(0x662D364ABF16DE2F, v, joaat('BLIP_MODIFIER_MP_COLOR_2'))
-            end
-        else
-            for k, v in pairs(SpawnedBankBilps) do
-                Citizen.InvokeNative(0x662D364ABF16DE2F, v, joaat('BLIP_MODIFIER_MP_COLOR_8'))
-            end
-        end           
+        GetBankHours()
         Wait(60000) -- every min
     end       
 end)
