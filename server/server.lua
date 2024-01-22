@@ -117,6 +117,54 @@ RSGCore.Commands.Add('moneyclip', 'Make Money Clip', {{ name = 'amount', help = 
     end
 end, 'user')
 
+-- blood moneyclip made usable
+RSGCore.Functions.CreateUseableItem('bloodmoneyclip', function(source, item)
+    local src = source
+    local Player = RSGCore.Functions.GetPlayer(src)
+
+    if not Player then return end
+
+    local itemData = Player.Functions.GetItemBySlot(item.slot)
+
+    if not itemData then return end
+
+    local amount = itemData.info.money
+
+    if Player.Functions.RemoveItem(item.name, 1, item.slot) then
+        Player.Functions.AddMoney('bloodmoney', amount)
+        lib.notify({ title = 'Blood Money Clip Used', description = 'You\'ve got $'..amount..' bloodmoney from this Blood Money Clip!', type = 'success' })
+    end
+end)
+
+-- create blood moneyclip command
+RSGCore.Commands.Add('bloodmoneyclip', 'Make Blood Money Clip', {{ name = 'amount', help = 'How much blood money do you want convert?' }}, true, function(source, args)
+    local src = source
+    local args1 = tonumber(args[1])
+
+    if args1 <= 0 then
+        lib.notify({ title = 'Insufficient Funds', description = 'please enter the correct amount!', type = 'error' })
+        return
+    end
+
+    local Player = RSGCore.Functions.GetPlayer(src)
+
+    if not Player then return end
+
+    local money = Player.Functions.GetMoney('bloodmoney')
+
+    if money and money >= args1 then
+        if Player.Functions.RemoveMoney('bloodmoney', args1, 'give-blood-money') then
+            local info =
+            {
+                money = args1
+            }
+
+            Player.Functions.AddItem('bloodmoneyclip', 1, false, info)
+            lib.notify({ title = 'Blood Money Clip Converted', description = 'You\'ve just converted $'..args1..' bloodmoney into a Money Clip!', type = 'success' })
+        end
+    end
+end, 'user')
+
 --------------------------------------------------------------------------------------------------
 -- start version check
 --------------------------------------------------------------------------------------------------
