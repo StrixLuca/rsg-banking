@@ -121,6 +121,23 @@ RegisterNetEvent('rsg-banking:client:safedeposit', function()
         local ZoneTypeId = 1
         local x,y,z =  table.unpack(GetEntityCoords(PlayerPedId()))
         local town = Citizen.InvokeNative(0x43AD8FC02B429D33, x,y,z, ZoneTypeId)
+
+        if town == -744494798 then
+            town = 'Armadillo'
+        end
+        if town == 1053078005 then
+            town = 'Blackwater'
+        end
+        if town == 2046780049 then
+            town = 'Rhodes'
+        end
+        if town == -765540529 then
+            town = 'SaintDenis'
+        end
+        if town == 459833523 then
+            town = 'Valentine'
+        end
+
         TriggerServerEvent("inventory:server:OpenInventory", "stash", cid..town, { maxweight = Config.StorageMaxWeight, slots = Config.StorageMaxSlots } )
         TriggerEvent("inventory:client:SetCurrentStash", cid..town)
     end)
