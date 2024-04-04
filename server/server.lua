@@ -139,5 +139,6 @@ RSGCore.Commands.Add('bloodmoneyclip', 'Make Blood Money Clip', {{ name = 'amoun
             lib.notify({ title = 'Blood Money Clip Converted', description = 'You\'ve just converted $'..args1..' bloodmoney into a Money Clip!', type = 'success' })
         end
     end
-end, 'user'
+end, 'user')
+
     
