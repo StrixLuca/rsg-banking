@@ -5,7 +5,7 @@ local SpawnedBankBilps = {}
 -------------------------------------------------------------------------------------------
 -- prompts and blips if needed
 -------------------------------------------------------------------------------------------
-Citizen.CreateThread(function()
+CreateThread(function()
     for _,v in pairs(Config.BankLocations) do
         exports['rsg-core']:createPrompt(v.id, v.coords, RSGCore.Shared.Keybinds[Config.Keybind], 'Open '..v.name, {
             type = 'client',
@@ -22,38 +22,12 @@ Citizen.CreateThread(function()
 end)
 
 -- set bank door default state
-Citizen.CreateThread(function()
+CreateThread(function()
     for _,v in pairs(Config.BankDoors) do
         Citizen.InvokeNative(0xD99229FE93B46286, v.door, 1, 1, 0, 0, 0, 0)
         Citizen.InvokeNative(0x6BAB9442830C7F53, v.door, v.state)
     end
 end)
-
--- open bank with opening hours
-local OpenBank = function()
-    local hour = GetClockHours()
-    if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
-        lib.notify({
-            title = 'Bank Closed',
-            description = 'come back after '..Config.OpenTime..'am',
-            type = 'error',
-            icon = 'fa-solid fa-building-columns',
-            iconAnimation = 'shake',
-            duration = 7000
-        })
-        return
-    end
-    RSGCore.Functions.TriggerCallback('rsg-banking:getBankingInformation', function(banking)
-        if banking ~= nil then
-            SendNUIMessage({action = "OPEN_BANK", balance = banking})
-            SetNuiFocus(true, true)
-            BankOpen = true
-            Citizen.InvokeNative(0xFA08722A5EA82DA7, 'RespawnLight')
-            for i=0, 10 do Citizen.InvokeNative(0xFDB74C9CC54C3F37, 0.1 + (i / 10)); Wait(10) end
-        end
-    end)
-end
-
 -- get bank hours function
 local GetBankHours = function()
     local hour = GetClockHours()
@@ -68,6 +42,50 @@ local GetBankHours = function()
     end           
     Wait(60000) -- every min
 end
+
+local OpenBank = function()
+    local hour = GetClockHours()
+    if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
+        lib.notify({
+            title = 'Bank Closed',
+            description = 'come back after '..Config.OpenTime..'am',
+            type = 'error',
+            icon = 'fa-solid fa-building-columns',
+            iconAnimation = 'shake',
+            duration = 7000
+        })
+        return
+    end
+    TaskStartScenarioInPlace(cache.ped, 'PROP_HUMAN_ATM', 0, true)
+    if progressBar({
+        label = 'open bank',
+        duration = math.random(1000,1000),
+        position = 'bottom',
+        useWhileDead = false,
+        allowCuffed = false,
+        allowFalling = false,
+        canCancel = true,
+        disable = {
+            car = true,
+            move = true,
+            combat = true,
+            mouse = false,
+        }
+    }) then
+        if banking ~= nil then
+            SendNUIMessage({action = "OPEN_BANK", balance = banking})
+            SetNuiFocus(true, true)
+            BankOpen = true
+            Citizen.InvokeNative(0xFA08722A5EA82DA7, 'RespawnLight')
+            for i=0, 10 do Citizen.InvokeNative(0xFDB74C9CC54C3F37, 0.1 + (i / 10)); Wait(10) end
+            ClearPedTasksImmediately(cache.ped)
+        end
+    else
+        ClearPedTasksImmediately(cache.ped)
+    end
+end
+
+
 
 -- get bank hours on player loading
 RegisterNetEvent('RSGCore:Client:OnPlayerLoaded', function()
@@ -119,7 +137,7 @@ RegisterNetEvent('rsg-banking:client:safedeposit', function()
     RSGCore.Functions.GetPlayerData(function(PlayerData)
         local cid = PlayerData.citizenid
         local ZoneTypeId = 1
-        local x,y,z =  table.unpack(GetEntityCoords(PlayerPedId()))
+        local x,y,z =  table.unpack(GetEntityCoords(cache.ped))
         local town = Citizen.InvokeNative(0x43AD8FC02B429D33, x,y,z, ZoneTypeId)
 
         if town == -744494798 then
