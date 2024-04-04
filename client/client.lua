@@ -44,6 +44,7 @@ local GetBankHours = function()
 end
 
 local OpenBank = function()
+   RSGCore.Functions.TriggerCallback('rsg-banking:getBankingInformation', function(banking)
     local hour = GetClockHours()
     if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
         lib.notify({
