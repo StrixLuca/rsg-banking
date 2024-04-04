@@ -44,7 +44,6 @@ local GetBankHours = function()
 end
 
 local OpenBank = function()
-   RSGCore.Functions.TriggerCallback('rsg-banking:getBankingInformation', function(banking)
     local hour = GetClockHours()
     if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
         lib.notify({
@@ -57,6 +56,7 @@ local OpenBank = function()
         })
         return
     end
+    RSGCore.Functions.TriggerCallback('rsg-banking:getBankingInformation', function(banking)
     TaskStartScenarioInPlace(cache.ped, 'PROP_HUMAN_ATM', 0, true)
     if progressBar({
         label = 'open bank',
