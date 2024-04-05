@@ -45,7 +45,7 @@ RegisterNetEvent("rsg-banking:server:transact", function(type, amount)
     local currentBank = Player.Functions.GetMoney('bank')
     amount = tonumber(amount)
     if amount <= 0 then
-        lib.notify(src, {title = "Invalid amount.", type = "error"})
+        lib.notify(src, {title = Lang:t('server.lang_1'), type = 'error'})
         return
     end
     if type == 1 then
@@ -55,7 +55,7 @@ RegisterNetEvent("rsg-banking:server:transact", function(type, amount)
             local newBankBalance = Player.Functions.GetMoney('bank')
             TriggerClientEvent('rsg-banking:client:UpdateBanking', src, newBankBalance)
         else
-            lib.notify(src, {title = "Insufficient funds.", type = "error"})
+            lib.notify(src, {title = Lang:t('server.lang_2'), type = 'error'})
         end
     elseif type == 2 then
         if currentCash >= amount then
@@ -64,7 +64,7 @@ RegisterNetEvent("rsg-banking:server:transact", function(type, amount)
             local newBankBalance = Player.Functions.GetMoney('bank')
             TriggerClientEvent('rsg-banking:client:UpdateBanking', src, newBankBalance)
         else
-            lib.notify(src, {title = "Insufficient funds.", type = "error"})
+            lib.notify(src, {title = Lang:t('server.lang_2'), type = 'error'})
         end
     end
 end)
@@ -84,17 +84,17 @@ RSGCore.Functions.CreateUseableItem('moneyclip', function(source, item)
 
     if Player.Functions.RemoveItem(item.name, 1, item.slot) then
         Player.Functions.AddMoney('cash', amount)
-        lib.notify({ title = 'Money Clip Used', description = 'You\'ve got $'..amount..' cash from this Money Clip!', type = 'success' })
+        lib.notify({ title = Lang:t('server.lang_3'), description = Lang:t('server.lang_4')..amount..Lang:t('server.lang_5'), type = 'success' })
     end
 end)
 
 -- create moneyclip command
-RSGCore.Commands.Add('moneyclip', 'Make Money Clip', {{ name = 'amount', help = 'How much money do you want convert?' }}, true, function(source, args)
+RSGCore.Commands.Add('moneyclip', Lang:t('server.lang_6'), {{ name = 'amount', help = Lang:t('server.lang_7') }}, true, function(source, args)
     local src = source
     local args1 = tonumber(args[1])
 
     if args1 <= 0 then
-        lib.notify({ title = 'Insufficient Funds', description = 'please enter the correct amount!', type = 'error' })
+        lib.notify({ title = Lang:t('server.lang_2'), description = Lang:t('server.lang_8'), type = 'error' })
         return
     end
 
@@ -112,7 +112,7 @@ RSGCore.Commands.Add('moneyclip', 'Make Money Clip', {{ name = 'amount', help = 
             }
 
             Player.Functions.AddItem('moneyclip', 1, false, info)
-            lib.notify({ title = 'Money Clip Converted', description = 'You\'ve just converted $'..args1..' cash into a Money Clip!', type = 'success' })
+            lib.notify({ title = Lang:t('server.lang_9'), description = Lang:t('server.lang_10')..args1..Lang:t('server.lang_11'), type = 'success' })
         end
     end
 end, 'user')
@@ -132,17 +132,17 @@ RSGCore.Functions.CreateUseableItem('bloodmoneyclip', function(source, item)
 
     if Player.Functions.RemoveItem(item.name, 1, item.slot) then
         Player.Functions.AddMoney('bloodmoney', amount)
-        lib.notify({ title = 'Blood Money Clip Used', description = 'You\'ve got $'..amount..' bloodmoney from this Blood Money Clip!', type = 'success' })
+        lib.notify({ title = Lang:t('server.lang_12'), description = Lang:t('server.lang_4')..amount..Lang:t('server.lang_13'), type = 'success' })
     end
 end)
 
 -- create blood moneyclip command
-RSGCore.Commands.Add('bloodmoneyclip', 'Make Blood Money Clip', {{ name = 'amount', help = 'How much blood money do you want convert?' }}, true, function(source, args)
+RSGCore.Commands.Add('bloodmoneyclip', Lang:t('server.lang_14'), {{ name = 'amount', help = Lang:t('server.lang_15') }}, true, function(source, args)
     local src = source
     local args1 = tonumber(args[1])
 
     if args1 <= 0 then
-        lib.notify({ title = 'Insufficient Funds', description = 'please enter the correct amount!', type = 'error' })
+        lib.notify({ title = Lang:t('server.lang_2'), description = Lang:t('server.lang_8'), type = 'error' })
         return
     end
 
@@ -160,7 +160,7 @@ RSGCore.Commands.Add('bloodmoneyclip', 'Make Blood Money Clip', {{ name = 'amoun
             }
 
             Player.Functions.AddItem('bloodmoneyclip', 1, false, info)
-            lib.notify({ title = 'Blood Money Clip Converted', description = 'You\'ve just converted $'..args1..' bloodmoney into a Money Clip!', type = 'success' })
+            lib.notify({ title = Lang:t('server.lang_16'), description = Lang:t('server.lang_10')..args1..Lang:t('server.lang_17'), type = 'success' })
         end
     end
 end, 'user')

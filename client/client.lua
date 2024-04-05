@@ -7,7 +7,7 @@ local SpawnedBankBilps = {}
 -------------------------------------------------------------------------------------------
 Citizen.CreateThread(function()
     for _,v in pairs(Config.BankLocations) do
-        exports['rsg-core']:createPrompt(v.id, v.coords, RSGCore.Shared.Keybinds[Config.Keybind], 'Open '..v.name, {
+        exports['rsg-core']:createPrompt(v.id, v.coords, RSGCore.Shared.Keybinds[Config.Keybind], Lang:t('client.lang_1')..v.name, {
             type = 'client',
             event = 'rsg-banking:client:OpenBanking',
         })
@@ -34,8 +34,8 @@ local OpenBank = function()
     local hour = GetClockHours()
     if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
         lib.notify({
-            title = 'Bank Closed',
-            description = 'come back after '..Config.OpenTime..'am',
+            title = Lang:t('client.lang_2'),
+            description = Lang:t('client.lang_3')..Config.OpenTime..Lang:t('client.lang_4'),
             type = 'error',
             icon = 'fa-solid fa-building-columns',
             iconAnimation = 'shake',
