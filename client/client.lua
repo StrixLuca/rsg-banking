@@ -33,7 +33,7 @@ else
             SetBlipSprite(BankBlip, joaat(v.blipsprite), true)
             SetBlipScale(BankBlip, v.blipscale)
             SetBlipName(BankBlip, v.name)
-            table.insert(SpawnedBankBilps, BankBlip)
+            SpawnedBankBilps[#SpawnedBankBilps + 1] = {SpawnedBankBilps, BankBlip} 
         end
     end
 end
