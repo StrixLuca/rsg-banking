@@ -1,5 +1,6 @@
 Config = {}
-
+---- target
+Config.Target = false  --- use target true or false
 -- safe deposit box
 Config.StorageMaxWeight = 500000
 Config.StorageMaxSlots = 5
