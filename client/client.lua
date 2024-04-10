@@ -29,11 +29,11 @@ else
         event = 'rsg-banking:client:OpenBanking',
     })
          if v.showblip == true then    
-            local BankBlip = BlipAddForCoords(1664425300, v.coords)
+             local BankBlip = BlipAddForCoords(1664425300, v.coords)
             SetBlipSprite(BankBlip, joaat(v.blipsprite), true)
             SetBlipScale(BankBlip, v.blipscale)
             SetBlipName(BankBlip, v.name)
-            SpawnedBankBilps[#SpawnedBankBilps + 1] = {SpawnedBankBilps, BankBlip} 
+            table.insert(SpawnedBankBilps, BankBlip)
         end
     end
 end
