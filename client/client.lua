@@ -28,12 +28,12 @@ else
         type = 'client',
         event = 'rsg-banking:client:OpenBanking',
     })
-        if v.showblip == true then    
-            local BankBlip = Citizen.InvokeNative(0x554D9D53F696D002, 1664425300, v.coords)
+         if v.showblip == true then    
+            local BankBlip = BlipAddForCoords(1664425300, v.coords)
             SetBlipSprite(BankBlip, joaat(v.blipsprite), true)
             SetBlipScale(BankBlip, v.blipscale)
-            Citizen.InvokeNative(0x9CB1A1623062F402, BankBlip, v.name)
-          SpawnedBankBilps[#SpawnedBankBilps + 1] = {SpawnedBankBilps, BankBlip} --- test
+            SetBlipName(BankBlip, v.name)
+            table.insert(SpawnedBankBilps, BankBlip)
         end
     end
 end
