@@ -5,27 +5,37 @@ local SpawnedBankBilps = {}
 -------------------------------------------------------------------------------------------
 -- prompts and blips if needed
 -------------------------------------------------------------------------------------------
-Citizen.CreateThread(function()
-    for _,v in pairs(Config.BankLocations) do
+CreateThread(function()
+        for i = 1, #Config.BankLocations do
+            local v = Config.BankLocations[i]
+        if Config.Target == 'target' then
+            exports['rsg-target']:AddCircleZone(v.name, v.coords, 1, {
+                name = v.name,
+            }, {
+                options = {
+                    {
+                        type = "client",
+                        event = "rsg-banking:client:OpenBanking",
+                        icon = "fas fa-bank",
+                        label = "Open bank",
+        
+                    },
+                },
+                distance = 1.5
+        })
+    elseif Config.Target == 'prompt' then
         exports['rsg-core']:createPrompt(v.id, v.coords, RSGCore.Shared.Keybinds[Config.Keybind], Lang:t('client.lang_1')..v.name, {
             type = 'client',
             event = 'rsg-banking:client:OpenBanking',
         })
+    end
         if v.showblip == true then    
             local BankBlip = BlipAddForCoords(1664425300, v.coords)
             SetBlipSprite(BankBlip, joaat(v.blipsprite), true)
             SetBlipScale(BankBlip, v.blipscale)
             SetBlipName(BankBlip, v.name)
-            table.insert(SpawnedBankBilps, BankBlip)
+            SpawnedBankBilps[#SpawnedBankBilps + 1] = BankBlip
         end
-    end
-end)
-
--- set bank door default state
-Citizen.CreateThread(function()
-    for _,v in pairs(Config.BankDoors) do
-        AddDoorToSystemNew(v.door, 1, 1, 0, 0, 0, 0)
-        DoorSystemSetDoorState(v.door, v.state)
     end
 end)
 
@@ -58,12 +68,12 @@ end
 local GetBankHours = function()
     local hour = GetClockHours()
     if (hour < Config.OpenTime) or (hour >= Config.CloseTime) then
-        for k, v in pairs(SpawnedBankBilps) do
-            BlipAddModifier(v, joaat('BLIP_MODIFIER_MP_COLOR_2'))
+            for i = 1, #SpawnedBankBilps do
+            BlipAddModifier(i, joaat('BLIP_MODIFIER_MP_COLOR_2'))
         end
     else
-        for k, v in pairs(SpawnedBankBilps) do
-            BlipAddModifier(v, joaat('BLIP_MODIFIER_MP_COLOR_8'))
+        for i = 1, #SpawnedBankBilps do
+            BlipAddModifier(i, joaat('BLIP_MODIFIER_MP_COLOR_8'))
         end
     end           
     Wait(60000) -- every min
