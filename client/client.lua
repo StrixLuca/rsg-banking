@@ -5,28 +5,38 @@ local SpawnedBankBilps = {}
 -------------------------------------------------------------------------------------------
 -- prompts and blips if needed
 -------------------------------------------------------------------------------------------
-Citizen.CreateThread(function()
-    for _,v in pairs(Config.BankLocations) do
-        exports['rsg-core']:createPrompt(v.id, v.coords, RSGCore.Shared.Keybinds[Config.Keybind], 'Open '..v.name, {
-            type = 'client',
-            event = 'rsg-banking:client:OpenBanking',
-        })
+CreateThread(function()
+    for i = 1, #Config.BankLocations do
+    local v = Config.BankLocations[i]
+    if Config.Target then
+    exports['rsg-target']:AddCircleZone(v.name, v.coords, 1, {
+        name = v.name,
+    }, {
+        options = {
+            {
+                type = "client",
+                event = "rsg-banking:client:OpenBanking",
+                icon = "fas fa-bank",
+                label = "Open bank",
+           
+            },
+        },
+        distance = 1.5
+})
+else
+    exports['rsg-core']:createPrompt(v.id, v.coords, RSGCore.Shared.Keybinds[Config.Keybind], Lang:t('client.lang_1')..v.name, {
+        type = 'client',
+        event = 'rsg-banking:client:OpenBanking',
+    })
         if v.showblip == true then    
             local BankBlip = Citizen.InvokeNative(0x554D9D53F696D002, 1664425300, v.coords)
             SetBlipSprite(BankBlip, joaat(v.blipsprite), true)
             SetBlipScale(BankBlip, v.blipscale)
             Citizen.InvokeNative(0x9CB1A1623062F402, BankBlip, v.name)
-            table.insert(SpawnedBankBilps, BankBlip)
+          SpawnedBankBilps[#SpawnedBankBilps + 1] = {SpawnedBankBilps, BankBlip} --- test
         end
     end
-end)
-
--- set bank door default state
-Citizen.CreateThread(function()
-    for _,v in pairs(Config.BankDoors) do
-        Citizen.InvokeNative(0xD99229FE93B46286, v.door, 1, 1, 0, 0, 0, 0)
-        Citizen.InvokeNative(0x6BAB9442830C7F53, v.door, v.state)
-    end
+end
 end)
 
 -- open bank with opening hours
